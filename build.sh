@@ -29,6 +29,6 @@ cd ${current_dir}
 make clean
 make
 
-cp output/libcrypto_api.a common/ext/gmssl/lib/
+cp src/libcrypto_api.a common/ext/gmssl/lib/
 
 echo -e "\nCrypto API and Application Build Done.\n"
