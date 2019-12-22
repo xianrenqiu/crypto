@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <sys/time.h>
+#include <assert.h>
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>
@@ -20,7 +21,10 @@
 #include <openssl/rsa.h>
 #include <openssl/rand.h>
 #include <openssl/sm2.h>
+#include <openssl/hmac.h>
 
 #include "crypto_api.h"
 		
+const EVP_MD *get_ssl_md(uint8_t algo);
+
 #endif
