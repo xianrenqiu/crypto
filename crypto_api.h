@@ -69,8 +69,8 @@ int crypto_rsa_priv_dec(crypto_rsa_key_t *rsa_key, uint8_t *in, uint8_t *out);
 int crypto_ecc_gen_keypair(uint8_t prikey[32], uint8_t pubkey[64]);
 int crypto_ecc_kg(uint8_t k[32], uint8_t r[64]);
 int crypto_ecc_kp(uint8_t k[32], uint8_t p[64], uint8_t r[64]);
-int crypto_ecdsa_sign(uint8_t prikey[32], uint8_t digest[32], uint8_t sign[32]);
-int crypto_ecdsa_verify(uint8_t pubkey[32], uint8_t digest[32], uint8_t sign[32]);
+int crypto_ecc_sign(uint8_t prikey[32], uint8_t digest[32], uint8_t sign[64]);
+int crypto_ecc_verify(uint8_t pubkey[32], uint8_t digest[32], uint8_t sign[64]);
 
 // x25519
 int crypto_x25519_kg(uint8_t k[32], uint8_t r[32]);
