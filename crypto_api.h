@@ -14,8 +14,6 @@ typedef enum crypto_ret_code_
 
 typedef enum crypto_algo_
 {
-    PKE_ECP256R1,
-    PKE_CURVE_25519,
     MD_ALGO_SHA1,
     MD_ALGO_SHA256,
     MD_ALGO_SHA384,
@@ -67,13 +65,18 @@ int crypto_rsa_pub_dec(crypto_rsa_key_t *rsa_key, uint8_t *in, uint8_t *out);
 int crypto_rsa_priv_enc(crypto_rsa_key_t *rsa_key, uint8_t *in, uint8_t *out);
 int crypto_rsa_priv_dec(crypto_rsa_key_t *rsa_key, uint8_t *in, uint8_t *out);
 
-// ecp256r1/curve25519
-int crypto_ecc_gen_keypair(uint8_t algo, uint8_t prikey[32], uint8_t pubkey[64]);
-int crypto_ecc_kg(uint8_t algo, uint8_t k[32], uint8_t r[64]);
-int crypto_ecc_kp(uint8_t algo, uint8_t k[32], uint8_t p[64], uint8_t r[64]);
-int crypto_ecdsa_sign(uint8_t algo, uint8_t prikey[32], uint8_t digest[32], uint8_t sign[32]);
-int crypto_ecdsa_verify(uint8_t algo, uint8_t pubkey[32], uint8_t digest[32], uint8_t sign[32]);
+// ecp256r1
+int crypto_ecc_gen_keypair(uint8_t prikey[32], uint8_t pubkey[64]);
+int crypto_ecc_kg(uint8_t k[32], uint8_t r[64]);
+int crypto_ecc_kp(uint8_t k[32], uint8_t p[64], uint8_t r[64]);
+int crypto_ecdsa_sign(uint8_t prikey[32], uint8_t digest[32], uint8_t sign[32]);
+int crypto_ecdsa_verify(uint8_t pubkey[32], uint8_t digest[32], uint8_t sign[32]);
 
+// x25519
+int crypto_x25519_kg(uint8_t k[32], uint8_t r[32]);
+int crypto_x25519_kp(uint8_t k[32], uint8_t p[32], uint8_t r[32]);
+
+// sm2
 int crypto_sm2_gen_keypair(uint8_t prikey[32], uint8_t pubkey[64]);
 int crypto_sm2_kg(uint8_t k[32], uint8_t r[64]);
 int crypto_sm2_kp(uint8_t k[32], uint8_t p[64], uint8_t r[64]);

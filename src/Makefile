@@ -4,7 +4,7 @@ AR = ar
 
 GMSSL_DIR := ../common/ext/gmssl
 
-CFLAGS = -g -O0 -Wall -fpic -std=c99 -L$(GMSSL_DIR)/lib -lcrypto -lssl -ldl -lpthread
+CFLAGS = -g -O0 -Wall -fpic -std=c99 -L$(GMSSL_DIR)/lib -l:libcrypto.a -ldl -lpthread
 
 INC = -I$(GMSSL_DIR)/include -I..
 

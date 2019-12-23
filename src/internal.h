@@ -26,5 +26,14 @@
 #include "crypto_api.h"
 		
 const EVP_MD *get_ssl_md(uint8_t algo);
+void tsr_swap_len(uint8_t *p, uint32_t len);
+
+int crypto_key2pkey(int nid, uint8_t prikey[32], uint8_t pubkey[64], EVP_PKEY *pkey);
+int crypto_ecc_gen_keypair_internal(int nid, uint8_t prikey[32], uint8_t pubkey[64]);
+int crypto_ecc_kg_internal(int nid, uint8_t k[32], uint8_t r[64]);
+int crypto_ecc_kp_internal(int nid, uint8_t k[32], uint8_t p[64], uint8_t r[64]);
+int crypto_ecc_sign_internal(int nid, uint8_t prikey[32], uint8_t digest[32], uint8_t sign[64]);
+int crypto_ecc_verify_internal(int nid, uint8_t prikey[32], uint8_t digest[32], uint8_t sign[64]);
+
 
 #endif

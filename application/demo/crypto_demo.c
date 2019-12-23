@@ -163,37 +163,80 @@ int sm2_enc_demo(void)
 	return CRYPTO_RET_SUCCESS;
 }
 
-int curve25519_kg_demo(void)
+int x25519_kg_demo(void)
 {
-	
+	uint8_t out[64];
+	assert(crypto_x25519_kg(x25519_prikey, out) == CRYPTO_RET_SUCCESS);
+	assert(memcmp(out, x25519_pubkey, sizeof(x25519_pubkey)) == 0);
+
 	printf("Crypto Demo: Do %s() success.\n", __func__);
 	return CRYPTO_RET_SUCCESS;
 }
 
-int curve25519_kp_demo(void)
+int x25519_kp_demo(void)
 {
-	
+	uint8_t out[64];
+	assert(crypto_x25519_kp(x25519_prikey, curve25519_gx, out) == CRYPTO_RET_SUCCESS);
+	assert(memcmp(out, x25519_pubkey, sizeof(x25519_pubkey)) == 0);
+
 	printf("Crypto Demo: Do %s() success.\n", __func__);
 	return CRYPTO_RET_SUCCESS;
 }
 
 int ecp256r1_kg_demo(void)
 {
-	
+	uint8_t out[64];
+	assert(crypto_ecc_kg(ecp256r1_prikey, out) == CRYPTO_RET_SUCCESS);
+	assert(memcmp(out, ecp256r1_pubkey, sizeof(ecp256r1_pubkey)) == 0);
+
 	printf("Crypto Demo: Do %s() success.\n", __func__);
 	return CRYPTO_RET_SUCCESS;
 }
 
 int ecp256r1_kp_demo(void)
 {
-	
+	uint8_t out[64];
+	assert(crypto_ecc_kp(ecp256r1_prikey, ecp256r1_pubkey, out) == CRYPTO_RET_SUCCESS);
+	assert(memcmp(out, ecp256r1_kp_result, sizeof(ecp256r1_kp_result)) == 0);
+
 	printf("Crypto Demo: Do %s() success.\n", __func__);
 	return CRYPTO_RET_SUCCESS;
 }
 
 int ecp256r1_sign_demo(void)
 {
+	uint8_t out[64];
+	assert(crypto_ecc_sign(ecp256r1_prikey, ecp256r1_msg, out) == CRYPTO_RET_SUCCESS);
+	assert(crypto_ecc_verify(ecp256r1_pubkey, ecp256r1_msg, out) == CRYPTO_RET_SUCCESS);
 	
+	printf("Crypto Demo: Do %s() success.\n", __func__);
+	return CRYPTO_RET_SUCCESS;
+}
+
+int rsa_genkey_demo(void)
+{
+	crypto_rsa_key_t rsa_key;
+	rsa_key.bits = 2048;
+	crypto_rsa_gen_keypair(&rsa_key);
+
+	printf("Crypto Demo: Do %s() success.\n", __func__);
+	return CRYPTO_RET_SUCCESS;
+}
+
+int sm2_genkey_demo(void)
+{
+	uint8_t prikey[32], pubkey[64];
+	assert(crypto_sm2_gen_keypair(prikey, pubkey) == CRYPTO_RET_SUCCESS);
+
+	printf("Crypto Demo: Do %s() success.\n", __func__);
+	return CRYPTO_RET_SUCCESS;
+}
+
+int ecp256r1_genkey_demo(void)
+{
+	uint8_t prikey[32], pubkey[64];
+	assert(crypto_ecc_gen_keypair(prikey, pubkey) == CRYPTO_RET_SUCCESS);
+
 	printf("Crypto Demo: Do %s() success.\n", __func__);
 	return CRYPTO_RET_SUCCESS;
 }
@@ -213,12 +256,16 @@ int main(int argc, char const *argv[])
 	assert(sm2_sign_demo() == CRYPTO_RET_SUCCESS);
 	assert(sm2_enc_demo() == CRYPTO_RET_SUCCESS);
 
-	assert(curve25519_kg_demo() == CRYPTO_RET_SUCCESS);
-	assert(curve25519_kp_demo() == CRYPTO_RET_SUCCESS);
+	assert(x25519_kg_demo() == CRYPTO_RET_SUCCESS);
+	assert(x25519_kp_demo() == CRYPTO_RET_SUCCESS);
 
 	assert(ecp256r1_kg_demo() == CRYPTO_RET_SUCCESS);
 	assert(ecp256r1_kp_demo() == CRYPTO_RET_SUCCESS);
 	assert(ecp256r1_sign_demo() == CRYPTO_RET_SUCCESS);
 	
+	assert(rsa_genkey_demo() == CRYPTO_RET_SUCCESS);
+	assert(sm2_genkey_demo() == CRYPTO_RET_SUCCESS);
+	assert(ecp256r1_genkey_demo() == CRYPTO_RET_SUCCESS);
+
 	return CRYPTO_RET_SUCCESS;
 }
