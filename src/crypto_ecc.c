@@ -57,3 +57,14 @@ int crypto_x25519_kp(uint8_t k[32], uint8_t p[32], uint8_t r[32])
 
 	return CRYPTO_RET_SUCCESS;
 }
+
+/* 0/1/2/255 bit 置 0，254 bit 置 1 */
+int crypto_x25519_gen_keypair(uint8_t prikey[32], uint8_t pubkey[32])
+{
+    crypto_random(prikey, 32);
+    prikey[31] &= 0xF8;
+    prikey[0] &= 0x7F;
+    prikey[0] |= 0x40;
+    
+	return crypto_x25519_kg(prikey, pubkey);
+}

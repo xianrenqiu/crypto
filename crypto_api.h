@@ -73,6 +73,7 @@ int crypto_ecc_sign(uint8_t prikey[32], uint8_t digest[32], uint8_t sign[64]);
 int crypto_ecc_verify(uint8_t pubkey[32], uint8_t digest[32], uint8_t sign[64]);
 
 // x25519
+int crypto_x25519_gen_keypair(uint8_t prikey[32], uint8_t pubkey[32]);
 int crypto_x25519_kg(uint8_t k[32], uint8_t r[32]);
 int crypto_x25519_kp(uint8_t k[32], uint8_t p[32], uint8_t r[32]);
 
