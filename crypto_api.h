@@ -40,16 +40,16 @@ typedef struct rsa_key_
     uint32_t bits;                                // 位数，1024/2048
     
     // key pair
-    uint8_t n[CRYPTO_RSA_MAX_BITS];               // 模数
-    uint8_t e[CRYPTO_RSA_MAX_BITS];               // 公开指数
-    uint8_t d[CRYPTO_RSA_MAX_BITS];               // 私密指数
+    uint8_t n[CRYPTO_RSA_MAX_BITS/8];               // 模数
+    uint8_t e[CRYPTO_RSA_MAX_BITS/8];               // 公开指数
+    uint8_t d[CRYPTO_RSA_MAX_BITS/8];               // 私密指数
 
     // crt
-    uint8_t p[CRYPTO_RSA_MAX_BITS/2];             // p        
-    uint8_t q[CRYPTO_RSA_MAX_BITS/2];             // q
-    uint8_t dmp1[CRYPTO_RSA_MAX_BITS/2];            // d mod (p-1)
-    uint8_t dmq1[CRYPTO_RSA_MAX_BITS/2];            // d mod (q-1)
-    uint8_t iqmp[CRYPTO_RSA_MAX_BITS/2];          // (inverse of q) mod p
+    uint8_t p[CRYPTO_RSA_MAX_BITS/8/2];             // p        
+    uint8_t q[CRYPTO_RSA_MAX_BITS/8/2];             // q
+    uint8_t dmp1[CRYPTO_RSA_MAX_BITS/8/2];            // d mod (p-1)
+    uint8_t dmq1[CRYPTO_RSA_MAX_BITS/8/2];            // d mod (q-1)
+    uint8_t iqmp[CRYPTO_RSA_MAX_BITS/8/2];          // (inverse of q) mod p
 } crypto_rsa_key_t;
 
 int crypto_random(uint8_t *buf, uint32_t size);
