@@ -19,25 +19,25 @@ void tsr_swap_len(uint8_t *p, uint32_t len)
 const EVP_MD *get_ssl_md(uint8_t algo)
 {
     switch (algo)
-	{
+    {
         case MD_ALGO_SM3:
             return EVP_sm3();
             break;
-    	case MD_ALGO_SHA1:
+        case MD_ALGO_SHA1:
             return EVP_sha1();
-    		break;
-    	case MD_ALGO_SHA256:
+            break;
+        case MD_ALGO_SHA256:
             return EVP_sha256();
-    		break;
-    	case MD_ALGO_SHA384:
+            break;
+        case MD_ALGO_SHA384:
             return EVP_sha384();
-    		break;
-    	case MD_ALGO_SHA512:
+            break;
+        case MD_ALGO_SHA512:
             return EVP_sha512();
-    		break;
-	}
-	
-	return NULL;
+            break;
+    }
+    
+    return NULL;
 }
 
 int eckey_to_crypto_key(uint8_t prikey[32], uint8_t pubkey[64], EC_KEY **eckey)
@@ -55,16 +55,15 @@ int eckey_to_crypto_key(uint8_t prikey[32], uint8_t pubkey[64], EC_KEY **eckey)
 
 int crypto_ecc_gen_keypair_internal(int nid, uint8_t prikey[32], uint8_t pubkey[64])
 {
-    EVP_PKEY *pkey = EVP_PKEY_new();
     EC_KEY *ec_key = EC_KEY_new_by_curve_name(nid);
     assert(ec_key != NULL);
-
     EC_KEY_set_asn1_flag(ec_key, OPENSSL_EC_NAMED_CURVE);
-    assert(EC_KEY_generate_key(ec_key) != 0);
-    assert(EVP_PKEY_set1_EC_KEY(pkey, ec_key) != 0);
-    assert(eckey_to_crypto_key(pubkey, prikey, &ec_key) == CRYPTO_RET_SUCCESS);
+    
+    do{
+        assert(EC_KEY_generate_key(ec_key) != 0);
+    } while(EC_KEY_check_key((const EC_KEY *)ec_key) != 1);
 
-    EVP_PKEY_free(pkey);
+    assert(eckey_to_crypto_key(prikey, pubkey, &ec_key) == CRYPTO_RET_SUCCESS);
 
     return CRYPTO_RET_SUCCESS;
 }
@@ -150,8 +149,9 @@ int crypto_ecc_kg_internal(int nid, uint8_t k[32], uint8_t r[64])
     else
         assert(EC_POINT_get_affine_coordinates_GF2m(group, ec_r, x1, y1, bn_ctx) == 1);
     
-    BN_bn2bin(x1, r);
-    BN_bn2bin(y1, r + 32);
+    memset(r, 0, 64);
+    BN_bn2bin(x1, r + 32 - BN_num_bytes(x1));
+    BN_bn2bin(y1, r + 64 - BN_num_bytes(y1));
 
     BN_CTX_free(bn_ctx);
     EC_POINT_free(ec_r);
@@ -194,8 +194,9 @@ int crypto_ecc_kp_internal(int nid, uint8_t k[32], uint8_t p[64], uint8_t r[64])
     else
         assert(EC_POINT_get_affine_coordinates_GF2m(group, ec_r, x2, y2, bn_ctx) == 1);
     
-    BN_bn2bin(x2, r);
-    BN_bn2bin(y2, r + 32);
+    memset(r, 0, 64);
+    BN_bn2bin(x2, r + 32 - BN_num_bytes(x2));
+    BN_bn2bin(y2, r + 64 - BN_num_bytes(y2));
     
     BN_CTX_free(bn_ctx);
     EC_POINT_free(ec_r);
@@ -215,7 +216,10 @@ int crypto_ecc_sign_internal(int nid, uint8_t prikey[32], uint8_t digest[32], ui
 
     EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
     assert(EVP_PKEY_sign_init(ctx) == 1);
-    assert(EVP_PKEY_CTX_set_ec_scheme(ctx, NID_sm_scheme) == 1);
+    
+    if(nid == NID_sm2p256v1)
+        assert(EVP_PKEY_CTX_set_ec_scheme(ctx, NID_sm_scheme) == 1);
+
     assert(EVP_PKEY_sign(ctx, sig_der, &sig_der_size, digest, 32) == 1);
 
     EVP_PKEY_free(pkey);
@@ -235,7 +239,10 @@ int crypto_ecc_verify_internal(int nid, uint8_t pubkey[64], uint8_t digest[32], 
     EVP_PKEY_CTX *ctx = EVP_PKEY_CTX_new(pkey, NULL);
     assert(crypto_bin2sigder(sig_der, &sig_der_size, sign) == CRYPTO_RET_SUCCESS);
     assert(EVP_PKEY_verify_init(ctx) == 1);
-    assert(EVP_PKEY_CTX_set_ec_scheme(ctx, NID_sm_scheme) == 1);
+
+    if(nid == NID_sm2p256v1)
+        assert(EVP_PKEY_CTX_set_ec_scheme(ctx, NID_sm_scheme) == 1);
+    
     assert(EVP_PKEY_verify(ctx, sig_der, sig_der_size, digest, 32) == 1);
 
     EVP_PKEY_free(pkey);
