@@ -88,7 +88,7 @@ int crypto_cipher(uint8_t algo, uint8_t mode, uint8_t enc, uint8_t *key, uint32_
     if ((mode == CIPHER_MODE_GCM) && (enc))
         assert(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, 16, tag) == 1);
 
-    //EVP_CIPHER_CTX_free(ctx);
+    EVP_CIPHER_CTX_free(ctx);
     
     return CRYPTO_RET_SUCCESS;
 }
