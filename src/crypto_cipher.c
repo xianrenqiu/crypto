@@ -79,13 +79,16 @@ int crypto_cipher(uint8_t algo, uint8_t mode, uint8_t enc, uint8_t *key, uint32_
     if (mode == CIPHER_MODE_GCM)
         assert(EVP_CipherUpdate(ctx, NULL, &len, aad, aad_len) == 1);
 
+    if ((mode == CIPHER_MODE_GCM) && !enc)
+        assert(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_SET_TAG, 16, tag) == 1);
+
     assert(EVP_CipherUpdate(ctx, dst, &len, src, src_len) == 1);
     assert(EVP_CipherFinal_ex(ctx, dst + len, &len) == 1);
 
-    if (mode == CIPHER_MODE_GCM)
+    if ((mode == CIPHER_MODE_GCM) && (enc))
         assert(EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_AEAD_GET_TAG, 16, tag) == 1);
 
-    EVP_CIPHER_CTX_free(ctx);
+    //EVP_CIPHER_CTX_free(ctx);
     
     return CRYPTO_RET_SUCCESS;
 }

@@ -19,25 +19,25 @@ void tsr_swap_len(uint8_t *p, uint32_t len)
 const EVP_MD *get_ssl_md(uint8_t algo)
 {
     switch (algo)
-    {
+	{
         case MD_ALGO_SM3:
             return EVP_sm3();
             break;
-        case MD_ALGO_SHA1:
+    	case MD_ALGO_SHA1:
             return EVP_sha1();
-            break;
-        case MD_ALGO_SHA256:
+    		break;
+    	case MD_ALGO_SHA256:
             return EVP_sha256();
-            break;
-        case MD_ALGO_SHA384:
+    		break;
+    	case MD_ALGO_SHA384:
             return EVP_sha384();
-            break;
-        case MD_ALGO_SHA512:
+    		break;
+    	case MD_ALGO_SHA512:
             return EVP_sha512();
-            break;
-    }
-    
-    return NULL;
+    		break;
+	}
+	
+	return NULL;
 }
 
 int eckey_to_crypto_key(uint8_t prikey[32], uint8_t pubkey[64], EC_KEY **eckey)
@@ -64,6 +64,8 @@ int crypto_ecc_gen_keypair_internal(int nid, uint8_t prikey[32], uint8_t pubkey[
     } while(EC_KEY_check_key((const EC_KEY *)ec_key) != 1);
 
     assert(eckey_to_crypto_key(prikey, pubkey, &ec_key) == CRYPTO_RET_SUCCESS);
+    
+    EC_KEY_free(ec_key);
 
     return CRYPTO_RET_SUCCESS;
 }

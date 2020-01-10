@@ -38,8 +38,8 @@ static int crypto_bin_to_sm2_cipher_der(EVP_PKEY_CTX *ctx, uint8_t *in, uint32_t
     
     buf_temp[0] = 0x04;
     memcpy(buf_temp + 1, in, 64);
-    memcpy(buf_temp + 65, in + 64, len - 96);
-    memcpy(buf_temp + 1 + (len - 32), in + (len - 32), 32);
+    memcpy(buf_temp + 65, in + 96, len - 96);
+    memcpy(buf_temp + 65 + (len - 96), in + 64, 32);
 
     cv = o2i_SM2CiphertextValue(group, EVP_sm3(), &cv, (const unsigned char **)&p, total_len);
     assert(cv != NULL);
@@ -69,13 +69,15 @@ static int sm2_cipher_der_to_crypto_bin(EVP_PKEY_CTX *ctx, uint8_t *der, uint32_
     *outlen = total_len - 1;
 
     memcpy(out, buf_temp + 1, 64);
-    memcpy(out + 64, buf_temp + 1 + 64, total_len - 96);
-    memcpy(out + (total_len - 32), buf_temp + 1 + (total_len - 32), 32);
+    memcpy(out + 64, buf_temp + 65 + (total_len - 97), 32);
+    memcpy(out + 96, buf_temp + 65, total_len - 97);
+
     free(buf_temp);
 
     return CRYPTO_RET_SUCCESS;
 }
 
+// ssl-> c1/c2/c3, crypto-> c1/c3/c2
 int crypto_sm2_encrypt(uint8_t pubkey[64], uint8_t *in, uint32_t inlen, uint8_t *out, uint32_t *outlen)
 {
 	size_t sm2_cipher_out_len = 256 + inlen;
@@ -97,6 +99,7 @@ int crypto_sm2_encrypt(uint8_t pubkey[64], uint8_t *in, uint32_t inlen, uint8_t 
 	return CRYPTO_RET_SUCCESS;
 }
 
+// ssl-> c1/c2/c3, crypto-> c1/c3/c2
 int crypto_sm2_decrypt(uint8_t prikey[32], uint8_t *in, uint32_t inlen, uint8_t *out, uint32_t *outlen)
 {
     size_t tlen = *outlen;
